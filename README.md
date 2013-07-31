@@ -32,7 +32,7 @@ npm install
 grunt
 ```
 
-That should produce output like that ends with something like this:
+That should produce output that ends with something like this:
 
 ```
 Running "mochaTest:test" (mochaTest) task
