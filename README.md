@@ -13,6 +13,7 @@ Minimal [node.js](http://nodejs.org/) project structure boilerplate:
 * Suggests a source control regimen:
   * The repository contains the source, so it includes `src/` and `test/`.
   * The package contains the distribution, so it includes `lib/`.
+* Provides a sensible `watch` task to keep testing changes as they occur.
 
 This boilerplate makes as few framework decisions as possible. As it is, selecting mocha is a compromise. Without
 choosing a test framework, it's not possible to demonstrate where testing fits into the build and distribution
@@ -41,6 +42,3 @@ ok 1 theTruth is true
 # pass 1
 # fail 0
 ```
-
-The Gruntfile still needs work to make it really easy to extend for things like stitching (for example, minification
-in a web application).

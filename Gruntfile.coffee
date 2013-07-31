@@ -7,30 +7,35 @@ module.exports = (grunt) ->
       build:
         src: 'build/'
         force: true
-      lib:
+      dist:
         src: 'lib/'
         force: true
 
     copy:
-      build:
+      dist:
         expand: true
         cwd: 'build/'
         src: 'lib/**/*.js'
         dest: '.'
-      src:
+      srcJs:
         expand: true
         cwd: 'src/'
         src: '**/*.js'
-        dest: 'lib/'
+        dest: 'build/lib/'
+      testJs:
+        expand: true
+        cwd: 'test/'
+        src: '**/*.js'
+        dest: 'build/test/'
 
     coffee:
-      lib:
+      src:
         expand: true
         cwd: 'src/'
         src: '**/*.coffee'
         dest: 'build/lib'
         ext: '.js'
-      tests:
+      test:
         expand: true
         cwd: 'test/'
         src: '**/*.coffee'
@@ -42,9 +47,24 @@ module.exports = (grunt) ->
         src: 'build/test/**/*-test.js'
         options: {reporter: 'tap'}
 
+    watch:
+      srcCoffee:
+        files: ['src/**/*.coffee']
+        tasks: ['coffee:src', 'dist', 'mochaTest']
+      srcJs:
+        files: ['src/**/*.js']
+        tasks: ['copy:srcJs', 'dist', 'mochaTest']
+      testCoffee:
+        files: ['test/**/*.coffee']
+        tasks: ['coffee:test', 'mochaTest']
+
   grunt.loadNpmTasks 'grunt-contrib-clean'
   grunt.loadNpmTasks 'grunt-contrib-coffee'
   grunt.loadNpmTasks 'grunt-contrib-copy'
+  grunt.loadNpmTasks 'grunt-contrib-watch'
   grunt.loadNpmTasks 'grunt-mocha-test'
 
-  grunt.registerTask 'default', 'Clean, build & test', ['clean', 'coffee', 'copy', 'mochaTest']
+  grunt.registerTask 'build',   'Build',                     ['coffee', 'copy:srcJs', 'copy:testJs']
+  grunt.registerTask 'dist',    'Prepare distribution',      ['copy:dist']
+  grunt.registerTask 'test',    'Test',                      ['mochaTest']
+  grunt.registerTask 'default', 'Clean, build, dist & test', ['clean', 'build', 'dist', 'mochaTest']
