@@ -42,29 +42,41 @@ module.exports = (grunt) ->
         dest: 'build/test'
         ext: '.js'
 
-    mochaTest:
-      test:
+    simplemocha:
+      options:
+        reporter: 'tap'
+      all:
         src: 'build/test/**/*-test.js'
-        options: {reporter: 'tap'}
 
     watch:
-      srcCoffee:
-        files: ['src/**/*.coffee']
-        tasks: ['coffee:src', 'dist', 'mochaTest']
-      srcJs:
-        files: ['src/**/*.js']
-        tasks: ['copy:srcJs', 'dist', 'mochaTest']
-      testCoffee:
-        files: ['test/**/*.coffee']
-        tasks: ['coffee:test', 'mochaTest']
+      src:
+        options:
+          event: ['added', 'changed']
+        files: ['src/**/*.{coffee,js}']
+        tasks: ['coffee:src', 'copy:srcJs', 'dist', 'test']
+      test:
+        options:
+          event: ['added', 'changed']
+        files: ['test/**/*.{coffee,js}']
+        tasks: ['coffee:test', 'copy:testJs', 'test']
+      testDeletes:
+        options:
+          event: 'deleted'
+        files: ['test/**/*.{coffee,js}']
+        tasks: ['clean:build', 'coffee:test', 'copy:testJs', 'test']
+      srcDeletes:
+        options:
+          event: 'deleted'
+        files: ['src/**/*.{coffee,js}']
+        tasks: ['clean', 'build', 'dist', 'test']
 
   grunt.loadNpmTasks 'grunt-contrib-clean'
   grunt.loadNpmTasks 'grunt-contrib-coffee'
   grunt.loadNpmTasks 'grunt-contrib-copy'
   grunt.loadNpmTasks 'grunt-contrib-watch'
-  grunt.loadNpmTasks 'grunt-mocha-test'
+  grunt.loadNpmTasks 'grunt-simple-mocha'
 
   grunt.registerTask 'build',   'Build',                     ['coffee', 'copy:srcJs', 'copy:testJs']
   grunt.registerTask 'dist',    'Prepare distribution',      ['copy:dist']
-  grunt.registerTask 'test',    'Test',                      ['mochaTest']
-  grunt.registerTask 'default', 'Clean, build, dist & test', ['clean', 'build', 'dist', 'mochaTest']
+  grunt.registerTask 'test',    'Test',                      ['simplemocha']
+  grunt.registerTask 'default', 'Clean, build, dist & test', ['clean', 'build', 'dist', 'test']
