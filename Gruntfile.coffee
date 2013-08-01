@@ -48,7 +48,7 @@ module.exports = (grunt) ->
       all:
         src: 'build/test/**/*-test.js'
 
-    watch:
+    justWatch:
       src:
         options:
           event: ['added', 'changed']
@@ -80,3 +80,6 @@ module.exports = (grunt) ->
   grunt.registerTask 'dist',    'Prepare distribution',      ['copy:dist']
   grunt.registerTask 'test',    'Test',                      ['simplemocha']
   grunt.registerTask 'default', 'Clean, build, dist & test', ['clean', 'build', 'dist', 'test']
+
+  grunt.renameTask   'watch',   'justWatch'
+  grunt.registerTask 'watch',   'Clean, build, dist, test & watch', ['default', 'justWatch']
