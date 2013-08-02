@@ -15,7 +15,7 @@ module.exports = (grunt) ->
       dist:
         expand: true
         cwd: 'build/'
-        src: 'lib/**/*.js'
+        src: ['**/*.js', '!test/**']
         dest: '.'
       srcJs:
         expand: true
@@ -33,7 +33,7 @@ module.exports = (grunt) ->
         expand: true
         cwd: 'src/'
         src: '**/*.coffee'
-        dest: 'build/lib'
+        dest: 'build'
         ext: '.js'
       test:
         expand: true
