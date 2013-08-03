@@ -9,10 +9,7 @@ Minimal [node.js](http://nodejs.org/) project structure boilerplate:
   * CoffeeScript and JavaScript sources under `src/`.
   * Tests under `test/`. CoffeeScript tests are compiled to JavaScript before being run, to make backtraces useful.
   * Build into `build/`.
-  * Distribute into `bin/` and `lib/`, e.g.
-    * `build/lib/service.js` -> `lib/service.js` (mode 0644)
-    * `build/bin/server.js` -> `bin/server.js` (mode 0755)
-    Supporting more distdirs is a one-line change.
+  * Distribute into `bin/` and `lib/`. Supporting more distdirs is a one-line change.
 * Suggests a source control regimen:
   * The repository contains the source, so it includes `src/` and `test/` and excludes sources from outside those
     directories.
