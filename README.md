@@ -7,12 +7,14 @@ Minimal [node.js](http://nodejs.org/) project structure boilerplate:
 * Includes the [mocha](http://visionmedia.github.io/mocha/) test framework, without any fancy assertion libraries.
 * Suggests a source, build and distribution directory layout:
   * CoffeeScript and JavaScript sources under `src/`.
-  * Tests under `test/`.
+  * Tests under `test/`. CoffeeScript tests are compiled to JavaScript before being run, to make backtraces useful.
   * Build into `build/`.
-  * Distribute into `lib/`.
+  * Distribute into `bin/` and `lib/`. Supporting more distdirs is a one-line change.
 * Suggests a source control regimen:
-  * The repository contains the source, so it includes `src/` and `test/`.
-  * The package contains the distribution, so it includes `lib/`.
+  * The repository contains the source, so it includes `src/` and `test/` and excludes sources from outside those
+    directories.
+  * The package contains the distribution, so it excludes `src/` and `test/` and includes sources from outside those
+    directories.
 * Provides a sensible `watch` task to keep testing changes as they occur.
 
 This boilerplate makes as few framework decisions as possible. As it is, selecting mocha is a compromise. Without

@@ -1,32 +1,45 @@
 module.exports = (grunt) ->
 
+  distdirs = ['bin', 'lib']
+  (distfiles = distdirs.map (d) -> "#{d}/**/*").push("*.js")
+  (cleanfiles = distdirs.slice(0)).push("*.js")
+
   grunt.initConfig
     pkg: grunt.file.readJSON 'package.json'
+
+    distfiles: distfiles
+    cleanfiles: cleanfiles
 
     clean:
       build:
         src: 'build/'
         force: true
       dist:
-        src: 'lib/'
+        src: '<%= cleanfiles %>'
         force: true
 
     copy:
       dist:
         expand: true
         cwd: 'build/'
-        src: ['**/*.js', '!test/**']
+        src: '<%= distfiles %>'
         dest: '.'
-      srcJs:
+      src:
         expand: true
         cwd: 'src/'
-        src: '**/*.js'
-        dest: 'build/lib/'
-      testJs:
+        src: ['<%= distfiles %>', '!**/*.coffee']
+        dest: 'build/'
+      test:
         expand: true
         cwd: 'test/'
-        src: '**/*.js'
+        src: ['**/*', '!**/*.coffee']
         dest: 'build/test/'
+
+    chmod:
+      binfiles:
+        options:
+          mode: '0755'
+        src: ['bin/**/*']
 
     coffee:
       src:
@@ -53,33 +66,39 @@ module.exports = (grunt) ->
         options:
           event: ['added', 'changed']
         files: ['src/**/*.{coffee,js}']
-        tasks: ['coffee:src', 'copy:srcJs', 'dist', 'test']
+        tasks: ['coffee:src', 'copy:src', 'justDist', 'justTest']
       test:
         options:
           event: ['added', 'changed']
         files: ['test/**/*.{coffee,js}']
-        tasks: ['coffee:test', 'copy:testJs', 'test']
+        tasks: ['coffee:test', 'copy:test', 'justTest']
       testDeletes:
         options:
           event: 'deleted'
         files: ['test/**/*.{coffee,js}']
-        tasks: ['clean:build', 'coffee:test', 'copy:testJs', 'test']
+        tasks: ['clean:build', 'coffee:test', 'copy:test', 'justTest']
       srcDeletes:
         options:
           event: 'deleted'
         files: ['src/**/*.{coffee,js}']
-        tasks: ['clean', 'build', 'dist', 'test']
+        tasks: ['test']
 
+  grunt.loadNpmTasks 'grunt-chmod'
   grunt.loadNpmTasks 'grunt-contrib-clean'
   grunt.loadNpmTasks 'grunt-contrib-coffee'
   grunt.loadNpmTasks 'grunt-contrib-copy'
   grunt.loadNpmTasks 'grunt-contrib-watch'
   grunt.loadNpmTasks 'grunt-simple-mocha'
 
-  grunt.registerTask 'build',   'Build',                     ['coffee', 'copy:srcJs', 'copy:testJs']
-  grunt.registerTask 'dist',    'Prepare distribution',      ['copy:dist']
-  grunt.registerTask 'test',    'Test',                      ['simplemocha']
-  grunt.registerTask 'default', 'Clean, build, dist & test', ['clean', 'build', 'dist', 'test']
+  grunt.registerTask 'justBuild', 'Build',                     ['coffee', 'copy:src', 'copy:test']
+  grunt.registerTask 'justDist',  'Prepare distribution',      ['copy:dist', 'chmod:binfiles']
+  grunt.registerTask 'justTest',  'Test',                      ['simplemocha']
+  grunt.registerTask 'build',     'Clean & build',             ['clean', 'justBuild']
+  grunt.registerTask 'dist',      'Clean, build & dist',       ['build', 'justDist']
 
-  grunt.renameTask   'watch',   'justWatch'
-  grunt.registerTask 'watch',   'Clean, build, dist, test & watch', ['default', 'justWatch']
+  grunt.registerTask 'default',   'Clean, build & dist',       ['dist']
+
+  grunt.registerTask 'test',      'Clean, build, dist & test', ['dist', 'justTest']
+
+  grunt.renameTask   'watch',     'justWatch'
+  grunt.registerTask 'watch',     'Clean, build, dist, test & watch', ['test', 'justWatch']
