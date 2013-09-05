@@ -81,7 +81,7 @@ module.exports = (grunt) ->
         options:
           event: 'deleted'
         files: ['src/**/*.{coffee,js}']
-        tasks: ['test']
+        tasks: ['watch:test']
 
   grunt.loadNpmTasks 'grunt-chmod'
   grunt.loadNpmTasks 'grunt-contrib-clean'
@@ -90,7 +90,7 @@ module.exports = (grunt) ->
   grunt.loadNpmTasks 'grunt-contrib-watch'
   grunt.loadNpmTasks 'grunt-simple-mocha'
 
-  grunt.registerTask 'justBuild', 'Build',                     ['coffee', 'copy:src', 'copy:test']
+  grunt.registerTask 'justBuild', 'Build',                     ['coffee:src', 'coffee:test', 'copy:src', 'copy:test']
   grunt.registerTask 'justDist',  'Prepare distribution',      ['copy:dist', 'chmod:binfiles']
   grunt.registerTask 'justTest',  'Test',                      ['simplemocha']
   grunt.registerTask 'build',     'Clean & build',             ['clean', 'justBuild']
@@ -99,6 +99,12 @@ module.exports = (grunt) ->
   grunt.registerTask 'default',   'Clean, build & dist',       ['dist']
 
   grunt.registerTask 'test',      'Clean, build, dist & test', ['dist', 'justTest']
+  # When dependent services must be started with external-daemon, do so in test but not watch:test, e.g.
+  #grunt.registerTask 'test',     'Clean, build, dist & test', ['external_daemon:redis', 'dist', 'justTest']
+  grunt.registerTask 'watch:test','Test w/o starting dependent services', ['dist', 'justTest']
+
+  grunt.registerTask 'test',      'Clean, build, dist & test', ['dist', 'justTest']
+  grunt.registerTask 'watch:test','Test w/o starting redis',   ['test']
 
   grunt.renameTask   'watch',     'justWatch'
   grunt.registerTask 'watch',     'Clean, build, dist, test & watch', ['test', 'justWatch']
