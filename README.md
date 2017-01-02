@@ -4,7 +4,7 @@ node-project-boilerplate
 Minimal [node.js](http://nodejs.org/) project structure boilerplate:
 
 * Uses the [grunt](http://gruntjs.com/) task runner to drive the build, test and distribute.
-* Includes the [mocha](http://visionmedia.github.io/mocha/) test framework, without any fancy assertion libraries.
+* Includes the [mocha](http://mochajs.org/) test framework, without any fancy assertion libraries.
 * Suggests a source, build and distribution directory layout:
   * CoffeeScript and JavaScript sources under `src/`.
   * Tests under `test/`. CoffeeScript tests are compiled to JavaScript before being run, to make backtraces useful.
